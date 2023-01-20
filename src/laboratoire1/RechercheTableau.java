@@ -39,9 +39,40 @@ public class RechercheTableau{
         return RechercheBinaire(tab, mid, val);
     }
 
-    public int RechercheBinaireModifie(int[] tab, int n, int val){
+    public int RechercheBinaireModifie(int[] tab, int n, int val) {
 
-        return -1;
+        if (n == tab.length) {
+            n = 0;
+        }
+
+        if (tab.length == 1) {
+            if (tab[0] == val) {
+                return 0;
+            } else return -1;
+        }
+
+        int firstThird = (tab.length + n) / 3;
+        int secondThird = ((tab.length + n) * 2) / 3;
+
+        if(secondThird >= tab.length){
+            secondThird = tab.length - 1;
+        }
+
+        if (tab[firstThird] == val) {
+            return firstThird;
+        } else if (tab[secondThird] == val) {
+            return secondThird;
+        }
+
+        if (tab[firstThird] > val) {
+            int[] tabFirstThird = Arrays.copyOfRange(tab, 0, firstThird);
+            return RechercheBinaireModifie(tabFirstThird, n, val);
+        } else if (tab[firstThird] < val && tab[secondThird] > val){
+            int[] tabSecondThird = Arrays.copyOfRange(tab, 0, secondThird);
+            return RechercheBinaireModifie(tabSecondThird, firstThird, val);
+        }
+
+        return RechercheBinaireModifie(tab, secondThird, val);
     }
 
 }
