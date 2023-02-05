@@ -1,9 +1,12 @@
 package laboratoire2;
+
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-public class Huffman{
-
+public class Huffman2 {
     //Lire le fichier
     public void readFileBinaryMode() throws IOException {
         String fileName = "src/laboratoire2/exemple.txt";
@@ -61,8 +64,8 @@ public class Huffman{
     }
 
     // Trie un map et le met dans un tableau avec l'algo max
-    public Frequency[] getByteByFrequencyOrder(Map<String, Integer> hm) throws IOException {
-        Frequency[] tab = new Frequency[hm.get("numOfVariousByte")];
+    public String[] getByteByFrequencyOrder(Map<String, Integer> hm) throws IOException {
+        String[] tab = new String[hm.get("numOfVariousByte")];
         hm.put("numOfVariousByte", 0);
         for(int i = 0; i < tab.length; i++){
             int max = 0;
@@ -77,20 +80,19 @@ public class Huffman{
                 }
             }
             hm.put(maxElt, 0);
-            tab[i] = new Frequency(maxElt, max);
+            tab[i] = maxElt;
         }
         hm.put("numOfVariousByte", tab.length);
         return tab;
     }
 
-    public HuffmanNode creationDArbreHuffman(Frequency[] tabF) throws CloneNotSupportedException {
-        HuffmanNode tree = new HuffmanNode(tabF[tabF.length - 1].getName(), tabF[tabF.length - 1].getValue(), null, null);
-        for(int i = tabF.length - 2; i >= 0; i--){
-            HuffmanNode newNode = new HuffmanNode(tabF[i].getName(), tabF[i].getValue(), null, null);
-            tree.addNode(newNode);
-        }
+    public void creationDArbreHuffman(String[] tabF){
+        int pos = 0;
+        Frequency minf1 = null;
+        Frequency minf2 = null;
 
-        return tree;
+        for(int i = 0; i < tabF.length; i++){
+        }
     }
 
 
@@ -102,5 +104,4 @@ public class Huffman{
     public void Decompresser(String nomFichierEntre, String nomFichierSortie){
 
     }
-
 }

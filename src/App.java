@@ -1,92 +1,56 @@
-import laboratoire1.RechercheTableau;
+import laboratoire2.Frequency;
+import laboratoire2.Huffman;
+import laboratoire2.HuffmanNode;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class App {
 
     public static void main(String[] args) {
-        RechercheTableau rech = new RechercheTableau();
-        int[] tab = new int[]{10, 24, 36, 44, 54, 68, 75, 83, 94, 105, 114, 123, 135, 147, 158, 169, 178};
-        //System.out.println(rech.RechercheLineaire(tab, tab.length, 75));
+        Huffman huff = new Huffman();
+        Frequency tabFrequencies[] = new Frequency[]{
+                new Frequency("a", 5),
+                new Frequency("r", 2),
+                new Frequency("b", 2),
+                new Frequency("d", 1),
+                new Frequency("c", 1)};
 
-        Random rand = new Random();
-
-        int[] tab2 = new int[2000];
-        for(int i = 0; i < tab2.length; i++){
-            int n = rand.nextInt(1000);
-            tab2[i] = n * i;
+        HuffmanNode tree = null;
+        try {
+            tree = huff.creationDArbreHuffman(tabFrequencies);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
         }
-        Arrays.sort(tab2);
+        System.out.println(tree.printTabName());
+        System.out.println(tree.printTabValue());
+        /*String fileName = "src/laboratoire2/exemple.txt";
+        File file = new File(fileName);
+        try {
+            //huff.readFileBinaryModeWithBuffered();
+            Map<String, Integer> hm =
+            huff.createFrequencyTable(file);
 
-
-        System.out.println("When we sort with a array that can have duplicates elements");
-        for(int i = 0; i < tab2.length; i++){
-
-            int rep1 = rech.RechercheLineaire(tab2, tab2.length, tab2[i]);
-            int rep2 = rech.RechercheBinaireModifie(tab2, tab2.length, tab2[i]);
-            if(rep1 != rep2){
-                System.out.println(tab2[i]);
-                System.out.println(rep1);
-                System.out.println(rep2 + "\n");
-            }
-        }
-
-        System.out.println("When we sort with binaire method with a array that can have duplicates elements");
-        for(int i = 0; i < tab2.length; i++){
-
-            int rep1 = rech.RechercheLineaire(tab2, tab2.length, tab2[i]);
-            int rep2 = rech.RechercheBinaire(tab2, tab2.length, tab2[i]);
-            if(rep1 != rep2){
-                System.out.println(tab2[i]);
-                System.out.println(rep1);
-                System.out.println(rep2 + "\n");
-            }
-        }
-
-        int[] tab3 = new int[2000];
-        for(int i = 0; i < tab3.length; i++){
-            boolean check = false;
-            int val = 0;
-            int j = 0;
-            while(!check){
-                j++;
-                int n = rand.nextInt(1000);
-                val = n * j;
-                if(rech.RechercheLineaire(tab3, tab3.length, val) == -1){
-                    check = true;
-                }
+            //test
+            Set<Map.Entry<String, Integer>> setHm = hm.entrySet();
+            Iterator<Map.Entry<String, Integer>> it = setHm.iterator();
+            while(it.hasNext()){
+                Map.Entry<String, Integer> e = it.next();
+                System.out.println(e.getKey() + " : " + e.getValue());
             }
 
-            tab3[i] = val;
-        }
-        Arrays.sort(tab3);
-
-        System.out.println("When we sort with a array that can't have duplicates elements");
-        for(int i = 0; i < tab3.length; i++){
-
-            int rep1 = rech.RechercheLineaire(tab3, tab3.length, tab3[i]);
-            int rep2 = rech.RechercheBinaireModifie(tab3, tab3.length, tab3[i]);
-            if(rep1 != rep2){
-                System.out.println(tab3[i]);
-                System.out.println(rep1);
-                System.out.println(rep2 + "\n");
+            Frequency tab[] = huff.getByteByFrequencyOrder(hm);
+            for(int i = 0; i < tab.length; i++){
+                System.out.println(tab[i].getName());
             }
-        }
-        //System.out.println(rech.RechercheBinaire(tab, tab.length, 178));
-        //System.out.println(rech.RechercheBinaireModifie(tab, tab.length, 36));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
 
-        System.out.println("When we sort with binaire Method with a array that can't have duplicates elements");
-        for(int i = 0; i < tab3.length; i++){
 
-            int rep1 = rech.RechercheLineaire(tab3, tab3.length, tab3[i]);
-            int rep2 = rech.RechercheBinaire(tab3, tab3.length, tab3[i]);
-            if(rep1 != rep2){
-                System.out.println(tab3[i]);
-                System.out.println(rep1);
-                System.out.println(rep2 + "\n");
-            }
-        }
     }
 }
