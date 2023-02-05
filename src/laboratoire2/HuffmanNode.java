@@ -10,6 +10,9 @@ public class HuffmanNode implements Cloneable{
     public HuffmanNode parent;
     public int bit = -1;
 
+    public int numberFloors;
+    public int numberNode;
+
     public HuffmanNode(String name, int value, HuffmanNode left, HuffmanNode right) {
         this.name = name;
         this.value = value;
