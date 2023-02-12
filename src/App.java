@@ -14,11 +14,15 @@ public class App {
     public static void main(String[] args) {
         Huffman huff = new Huffman();
         /*Frequency tabFrequencies[] = new Frequency[]{
-                new Frequency("a", 5),
-                new Frequency("r", 2),
-                new Frequency("b", 2),
-                new Frequency("d", 1),
-                new Frequency("c", 1)};
+                new Frequency("a", 25),
+                new Frequency("r", 22),
+                new Frequency("b", 20),
+                new Frequency("d", 18),
+                new Frequency("c", 16),
+                new Frequency("e", 16),
+                new Frequency("f", 14),
+                new Frequency("g", 12),
+                new Frequency("h", 10)};
 
         HuffmanNode tree = null;
         try {
@@ -35,25 +39,19 @@ public class App {
 
         for(HuffmanNode n : tab){
             System.out.println(n.getName() + " : " + n.getValue() + " : " + n.getBitNode() );
-        }
-
-        tab = tree.getAllNodeBitInOrder();
-
-        for(HuffmanNode n : tab){
-            System.out.println(n.getName() + " : " + n.getValue() + " : " + n.getBitNode() );
         }*/
 
         String fileNameEntry = "src/laboratoire2/exemple.txt";
         String fileNameOut = "src/laboratoire2/exempleCompresse.gzip";
 
         String fileNameDecompress = "src/laboratoire2/exempleDeCompress.txt";
-/*
 
-        fileNameEntry = "src/laboratoire2/test2.pdf";
-        fileNameOut = "src/laboratoire2/test2Compresse.bit";
 
-        fileNameEntry = "src/laboratoire2/1087062.jpg";
-        fileNameOut = "src/laboratoire2/imageCompresse.bit";*/
+/*        fileNameEntry = "src/laboratoire2/testImage.jpg";
+        fileNameOut = "src/laboratoire2/imageCompresse.bit";
+
+        fileNameDecompress = "src/laboratoire2/imageDeCompress.jpg";*/
+
         try {
             huff.Compresser(fileNameEntry, fileNameOut);
 

@@ -52,30 +52,58 @@ public class HuffmanNode implements Cloneable{
             HuffmanNode newNodeRight = initializeNewNodeRight();
             newNodeLeft.setBit(1);
             newNodeRight.setBit(0);
-            if(node.getValue() >= this.value){
-                this.left.left = newNodeLeft;
-                this.left.right = newNodeRight;
-                this.left.name = this.name;
-                this.left.value = this.value;
-
-                this.value = this.left.value + node.getValue();
-                node.setBit(0);
-                this.right = node;
+            if(this.left.left != null || this.right.left != null){
+                if(this.left.left == null){
+                    if((this.left.getValue() + node.getValue()) < this.right.getValue()){
+                        this.left.addNode(node);
+                    }else{
+                        newNodeLeft.setBit(0);
+                        newNodeRight.setBit(1);
+                        this.left = newNodeRight;
+                        this.right = newNodeLeft;
+                        this.right.addNode(node);
+                    }
+                }else if(this.right.left == null){
+                    this.right.addNode(node);
+                }else{
+                    if((this.left.getValue() + node.getValue()) < this.right.getValue()){
+                        this.left.addNode(node);
+                    }else{
+                        addNodeToRightOrToLeft(node, newNodeLeft, newNodeRight);
+                    }
+                }
+                this.value = this.left.getValue() + this.right.getValue();
             }else{
-                this.right.left = newNodeLeft;
-                this.right.right = newNodeRight;
-                this.right.name = this.name;
-                this.right.value = this.value;
-
-                this.value = this.right.value + node.getValue();
-                node.setBit(1);
-                this.left = node;
+                addNodeToRightOrToLeft(node, newNodeLeft, newNodeRight);
             }
+
 
         }
 
         this.left.setBitNode(this.left.getBit() + "");
         this.right.setBitNode(this.right.getBit() + "");
+    }
+
+    public void addNodeToRightOrToLeft(HuffmanNode node, HuffmanNode newNodeLeft, HuffmanNode newNodeRight){
+        if(node.getValue() >= this.value){
+            this.left.left = newNodeLeft;
+            this.left.right = newNodeRight;
+            this.left.name = this.name;
+            this.left.value = this.value;
+
+            this.value = this.left.value + node.getValue();
+            node.setBit(0);
+            this.right = node;
+        }else{
+            this.right.left = newNodeLeft;
+            this.right.right = newNodeRight;
+            this.right.name = this.name;
+            this.right.value = this.value;
+
+            this.value = this.right.value + node.getValue();
+            node.setBit(1);
+            this.left = node;
+        }
     }
 
     public HuffmanNode initializeNewNodeLeft() throws CloneNotSupportedException {

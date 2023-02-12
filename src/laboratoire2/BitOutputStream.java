@@ -37,7 +37,7 @@ public class BitOutputStream {
     //       closing the output.
     private void flush() {
         try {
-            System.out.println(digits);
+            //System.out.println(digits);
             output.write(digits);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());

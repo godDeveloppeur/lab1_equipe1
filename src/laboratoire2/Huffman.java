@@ -129,6 +129,9 @@ public class Huffman{
         try {
             tree = creationDArbreHuffman(tabFrequencies);
             HuffmanNode[] huffNodes = tree.getAllNodeBitInOrder();
+            for(HuffmanNode n : huffNodes){
+                System.out.println(n.getName() + " : " + n.getValue() + " : " + n.getBitNode() );
+            }
             BitOutputStream bout = new BitOutputStream(nomFichierSortie, tabFrequencies);
             String compresseFileString = generateCompresseFile(entryFile, huffNodes);
 
