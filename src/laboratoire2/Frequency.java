@@ -1,6 +1,8 @@
 package laboratoire2;
 
-public class Frequency {
+import java.io.Serializable;
+
+public class Frequency implements Serializable {
 
     private int value;
 
