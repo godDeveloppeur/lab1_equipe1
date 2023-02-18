@@ -10,8 +10,8 @@ import java.util.Set;
 public class App2 {
     public static void main(String[] args) {
         testTheHuffManTree();
-        /*testCompressTypePdf();
-        testDeCompressTypePdf();*/
+        testCompressTypePdf();
+        testDeCompressTypePdf();
         /*testCompressTypeDocx();
         testDeCompressTypeDocx();*/
         testCompress();

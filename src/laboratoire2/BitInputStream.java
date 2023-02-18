@@ -8,7 +8,7 @@ public class BitInputStream {
     private FileInputStream input;
     private int digits;     // next set of digits (buffer)
     private int numDigits;  // how many digits from buffer have been used
-    private Map<String, Integer> mapFrequencies;
+    private String mapFrequenciesString;
     private static final int BYTE_SIZE = 8;  // digits per byte
 
 
@@ -18,7 +18,7 @@ public class BitInputStream {
         try {
             input = new FileInputStream(file);
             ObjectInputStream s = new ObjectInputStream(input);
-            mapFrequencies = (Map<String, Integer>) s.readObject();
+            mapFrequenciesString = (String) s.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
         } catch (ClassNotFoundException e) {
@@ -50,8 +50,8 @@ public class BitInputStream {
         numDigits = 0;
     }
 
-    public Map<String, Integer> getMapFrequencies() {
-        return mapFrequencies;
+    public String getMapFrequenciesString() {
+        return mapFrequenciesString;
     }
 
     // post: input is closed

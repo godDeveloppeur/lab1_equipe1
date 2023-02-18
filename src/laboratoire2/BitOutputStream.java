@@ -12,11 +12,11 @@ public class BitOutputStream {
 
     // pre : given file name is legal
     // post: creates a BitOutputStream sending output to the file
-    public BitOutputStream(String file,  Map<String, Integer> mapFrequencies) {
+    public BitOutputStream(String file,  String mapFrequenciesString) {
         try {
             output = new FileOutputStream(file);
             ObjectOutput s = new ObjectOutputStream(output);
-            s.writeObject(mapFrequencies);
+            s.writeObject(mapFrequenciesString);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
         }

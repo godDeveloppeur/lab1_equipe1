@@ -23,25 +23,39 @@ public class Huffman{
         return hm;
     }
 
-    public Frequency[] getTabFrequencies(Map<String, Integer> hm) {
-        Frequency[] tabFrequencies = new Frequency[hm.size()];
+    public String generateFrequenceTableToString(Map<String, Integer> hm){
+        String result = "";
         Set<Map.Entry<String, Integer>> setHm = hm.entrySet();
         Iterator<Map.Entry<String, Integer>> it = setHm.iterator();
-        int a = 0;
         while(it.hasNext()){
             Map.Entry<String, Integer> e = it.next();
-            tabFrequencies[a] = new Frequency(e.getKey(), e.getValue());
-            a++;
+            result += Integer.parseInt(e.getKey().substring(2), 16) +  ":" + e.getValue() + ";";
         }
 
-        return tabFrequencies;
+        return result;
     }
 
+    public Map<String, Integer>  generateFrequenceTableWithString(String str){
+        Map<String, Integer> hm = new HashMap<>();
+        String[] elts = str.split(";");
+        for(String e : elts){
+            //System.out.println(e);
+            String[] delts = e.split(":");
+            hm.put(String.format("0x%X", Integer.parseInt(delts[0])), Integer.parseInt(delts[1]));
+        }
+
+        return hm;
+    }
+
+
     // Trie un map et le met dans un tableau avec l'algo max
-    public PriorityQueue<HuffmanNode> getByteByFrequencyOrder(Frequency[] tabFrequencies) throws IOException {
+    public PriorityQueue<HuffmanNode> getByteByFrequencyOrder(Map<String, Integer> hm){
         PriorityQueue<HuffmanNode> priorityQueue = new PriorityQueue<>();
-        for(int i = 0; i < tabFrequencies.length; i++){
-            HuffmanNode node = new HuffmanNode(tabFrequencies[i].getName(), tabFrequencies[i].getValue(), null,null);
+        Set<Map.Entry<String, Integer>> setHm = hm.entrySet();
+        Iterator<Map.Entry<String, Integer>> it = setHm.iterator();
+        while(it.hasNext()){
+            Map.Entry<String, Integer> e = it.next();
+            HuffmanNode node = new HuffmanNode(e.getKey(), e.getValue(), null,null);
             priorityQueue.offer(node);
         }
 
@@ -91,13 +105,13 @@ public class Huffman{
     public void Compresser(String nomFichierEntre, String nomFichierSortie) throws IOException {
         File entryFile = new File(nomFichierEntre);
         Map<String, Integer> hm = createFrequencyTable(entryFile);
-        Frequency[] tabFrequencies = getTabFrequencies(hm);
-        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(tabFrequencies);
+        String mapFrequenciesString = generateFrequenceTableToString(hm);
+        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(hm);
         HuffmanNode tree = null;
         try {
             tree = creationDArbreHuffman(huffmanNodepriorityQueue);
             Map<String, String> allNodeBit = tree.getAllNodeBitInOrder();
-            BitOutputStream bout = new BitOutputStream(nomFichierSortie, hm);
+            BitOutputStream bout = new BitOutputStream(nomFichierSortie, mapFrequenciesString);
             String compresseFileString = generateCompresseFile(entryFile, allNodeBit);
 
             System.out.println("Start write the bit");
@@ -117,9 +131,9 @@ public class Huffman{
     public void Decompresser(String nomFichierEntre, String nomFichierSortie) throws IOException {
         BitInputStream bint = new BitInputStream(nomFichierEntre);
         BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(nomFichierSortie));
-        Map<String, Integer> hm = bint.getMapFrequencies();
-        Frequency[] tabFrequencies = getTabFrequencies(hm);
-        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(tabFrequencies);
+        String mapFrequenciesString = bint.getMapFrequenciesString();
+        Map<String, Integer> hm = generateFrequenceTableWithString(mapFrequenciesString);
+        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(hm);
         HuffmanNode tree = null;
         try {
             tree = creationDArbreHuffman(huffmanNodepriorityQueue);
