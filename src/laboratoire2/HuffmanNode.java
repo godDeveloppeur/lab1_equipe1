@@ -1,9 +1,14 @@
 package laboratoire2;
 
-public class HuffmanNode implements Cloneable{
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class HuffmanNode implements Comparable<HuffmanNode>, Serializable {
 
     private String name;
-    private int value;
+    private int frequence;
     private HuffmanNode left;
     private HuffmanNode right;
 
@@ -11,126 +16,26 @@ public class HuffmanNode implements Cloneable{
     private String bitNode;
     private boolean active;
 
-    private int numberNodeWithOutMixNode;
-    private int numberNode;
     private HuffmanNode actualReadNode;
 
     public HuffmanNode(String name, int value, HuffmanNode left, HuffmanNode right) {
         this.name = name;
-        this.value = value;
+        this.frequence = value;
         this.left = left;
         this.right = right;
         this.bit = -1;
         this.bitNode = "";
         this.active = true;
-        this.numberNode = 0;
-        this.numberNodeWithOutMixNode = 1;
         this.actualReadNode = this;
     }
 
-
-    public void addNode(HuffmanNode node) throws CloneNotSupportedException {
-        this.numberNode += 2;
-        this.numberNodeWithOutMixNode++;
-        if(this.left == null && this.right == null){
-            HuffmanNode newNode = new HuffmanNode(this.name, this.value, null, null);
-            this.name = "#";
-            this.value = newNode.getValue() + node.getValue();
-            if(newNode.getValue() <= node.getValue()){
-                newNode.setBit(1);
-                node.setBit(0);
-                this.left = newNode;
-                this.right = node;
-            }else{
-                newNode.setBit(0);
-                node.setBit(1);
-                this.left = node;
-                this.right = newNode;
-            }
-        }else{
-            HuffmanNode newNodeLeft = initializeNewNodeLeft();
-            HuffmanNode newNodeRight = initializeNewNodeRight();
-            newNodeLeft.setBit(1);
-            newNodeRight.setBit(0);
-            if(this.left.left != null || this.right.left != null){
-                if(this.left.left == null){
-                    checkTheSummaryValueAndAddNode(node, newNodeLeft, newNodeRight);
-                }else if(this.right.left == null){
-                    this.right.addNode(node);
-                }else{
-                    if(node.getValue() >= this.right.getValue()){
-                        addNodeToRightOrToLeft(node, newNodeLeft, newNodeRight);
-                    }else{
-                        checkTheSummaryValueAndAddNode(node, newNodeLeft, newNodeRight);
-                    }
-
-                }
-                this.value = this.left.getValue() + this.right.getValue();
-            }else{
-                addNodeToRightOrToLeft(node, newNodeLeft, newNodeRight);
-            }
-
-
-        }
-    }
-
-    public void checkTheSummaryValueAndAddNode(HuffmanNode node, HuffmanNode newNodeLeft, HuffmanNode newNodeRight) throws CloneNotSupportedException {
-        if((this.left.getValue() + node.getValue()) < this.right.getValue()){
-            this.left.addNode(node);
-        }else{
-            newNodeLeft.setBit(0);
-            newNodeRight.setBit(1);
-            this.left = newNodeRight;
-            this.right = newNodeLeft;
-            this.right.addNode(node);
-        }
-    }
-
-    public void addNodeToRightOrToLeft(HuffmanNode node, HuffmanNode newNodeLeft, HuffmanNode newNodeRight){
-        if(node.getValue() >= this.value){
-            this.left.left = newNodeLeft;
-            this.left.right = newNodeRight;
-            this.left.name = this.name;
-            this.left.value = this.value;
-
-            this.value = this.left.value + node.getValue();
-            node.setBit(0);
-            this.right = node;
-        }else{
-            this.right.left = newNodeLeft;
-            this.right.right = newNodeRight;
-            this.right.name = this.name;
-            this.right.value = this.value;
-
-            this.value = this.right.value + node.getValue();
-            node.setBit(1);
-            this.left = node;
-        }
-    }
-
-    public HuffmanNode initializeNewNodeLeft() throws CloneNotSupportedException {
-        HuffmanNode newNodeLeft;
-        if(this.left.left != null){
-            newNodeLeft = new HuffmanNode(this.left.name, this.left.value, (HuffmanNode) this.left.left.clone(), (HuffmanNode) this.left.right.clone());
-        }else{
-            newNodeLeft = new HuffmanNode(this.left.name, this.left.value, null, null);
-        }
-        return newNodeLeft;
-    }
-
-    public HuffmanNode initializeNewNodeRight() throws CloneNotSupportedException {
-        HuffmanNode newNodeRight;
-        if(this.right.left != null){
-            newNodeRight = new HuffmanNode(this.right.name, this.right.value, (HuffmanNode) this.right.left.clone(), (HuffmanNode) this.right.right.clone());
-        }else{
-            newNodeRight = new HuffmanNode(this.right.name, this.right.value, null, null);
-        }
-
-        return newNodeRight;
+    @Override
+    public int compareTo(HuffmanNode node) {
+        return frequence - node.getFrequence();
     }
 
     public HuffmanNode readTheBit(int bit){
-        if(bit == 1){
+        if(bit == 0){
             this.actualReadNode = this.actualReadNode.left;
         }else{
             this.actualReadNode = this.actualReadNode.right;
@@ -144,24 +49,23 @@ public class HuffmanNode implements Cloneable{
     }
 
 
-    public HuffmanNode[] getAllNodeBitInOrder(){
-        System.out.println("Start generate Node Bit in order");
+    public Map<String, String> getAllNodeBitInOrder(){
+        System.out.println("Start generate Node Bit");
         this.left.setBitNode(this.left.getBit() + "");
         this.right.setBitNode(this.right.getBit() + "");
-        int a = this.numberNodeWithOutMixNode;
-        HuffmanNode[] tree = new HuffmanNode[this.numberNodeWithOutMixNode];
-        for(int i = this.numberNode - 1; i >= 0; i--){
-            HuffmanNode n = this.getTheLastChild();
+        Map<String, String> allNodeBit = new HashMap<>();
+        HuffmanNode n = this.getTheLastChild();
+        while(n != null){
             n.setActive(false);
             if(!n.getName().equals("#")){
-                a--;
-                tree[a] = n;
+                allNodeBit.put(n.getName(), n.getBitNode());
             }
-
+            n = this.getTheLastChild();
         }
+
         this.reputAllTheNodeActive();
-        System.out.println("Finish generate Node Bit in order");
-        return tree;
+        System.out.println("Finish generate Node Bit");
+        return allNodeBit;
     }
 
     public void reputAllTheNodeActive(){
@@ -187,8 +91,11 @@ public class HuffmanNode implements Cloneable{
             if(this.right != null && this.right.isActive()){
                 lastChildNode = this.right.getTheLastChild();
             }else{
-
-                lastChildNode = this;
+                if(this.isActive()){
+                    lastChildNode = this;
+                }else{
+                    lastChildNode = null;
+                }
             }
         }
         return lastChildNode;
@@ -239,7 +146,7 @@ public class HuffmanNode implements Cloneable{
 
     public String printTabValue(){
         String resultat = "";
-        resultat += this.value + ",";
+        resultat += this.frequence + ",";
         if(this.left != null){
             resultat += this.left.printTabValue();
         }
@@ -290,12 +197,12 @@ public class HuffmanNode implements Cloneable{
         this.name = name;
     }
 
-    public int getValue() {
-        return value;
+    public int getFrequence() {
+        return frequence;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setFrequence(int frequence) {
+        this.frequence = frequence;
     }
 
     public HuffmanNode getLeft() {
@@ -314,7 +221,4 @@ public class HuffmanNode implements Cloneable{
         this.right = right;
     }
 
-    public Object clone()throws CloneNotSupportedException{
-        return super.clone();
-    }
 }

@@ -1,48 +1,13 @@
 package laboratoire2;
+
 import java.io.*;
 import java.util.*;
 
 public class Huffman{
 
-
-    //Lire le fichier
-    public void readFileBinaryMode() throws IOException {
-        String fileName = "src/laboratoire2/exemple.txt";
-        int numOfReadChar_binMode = 0;
-        File file = new File(fileName);
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            int singleCharInt;
-            char singleChar;
-            while((singleCharInt = fileInputStream.read()) != -1) {
-                singleChar = (char) singleCharInt;
-                System.out.println(String.format("0x%X %c", singleCharInt, singleChar));
-                numOfReadChar_binMode++;
-            }
-        }
-        System.out.println("Nombre d'octets lus en mode binaire : "+numOfReadChar_binMode);
-    }
-
-    //Lire le fichier
-    public void readFileBinaryModeWithBuffered() throws IOException {
-        String fileName = "src/laboratoire2/exemple.txt";
-        int numOfReadChar_binMode = 0;
-        File file = new File(fileName);
-        try (InputStream bufferedReader = new BufferedInputStream(new FileInputStream(file))) {
-            int singleCharInt;
-            char singleChar;
-            while((singleCharInt = bufferedReader.read()) != -1) {
-                singleChar = (char) singleCharInt;
-                System.out.println(String.format("0x%X %c", singleCharInt, singleChar));
-                numOfReadChar_binMode++;
-            }
-        }
-        System.out.println("Nombre d'octets lus en mode binaire : "+numOfReadChar_binMode);
-    }
-
     // Création de la table de fréquence
     public Map<String, Integer> createFrequencyTable(File file) throws IOException {
         Map<String, Integer> hm = new HashMap<>();
-        int numOfVariousByte = 0;
         try (InputStream bufferedReader = new BufferedInputStream(new FileInputStream(file))) {
             int singleCharInt;
             while((singleCharInt = bufferedReader.read()) != -1) {
@@ -51,52 +16,59 @@ public class Huffman{
                 if(hm.containsKey(byteRead)){
                     hm.put(byteRead, hm.get(byteRead) + 1);
                 }else{
-                    numOfVariousByte++;
                     hm.put(byteRead, 1);
                 }
             }
         }
-
-        hm.put("numOfVariousByte", numOfVariousByte);
         return hm;
     }
 
-    // Trie un map et le met dans un tableau avec l'algo max
-    public Frequency[] getByteByFrequencyOrder(Map<String, Integer> hm) throws IOException {
-        Frequency[] tab = new Frequency[hm.get("numOfVariousByte")];
-        hm.put("numOfVariousByte", 0);
-        for(int i = 0; i < tab.length; i++){
-            int max = 0;
-            String maxElt = null;
-            Set<Map.Entry<String, Integer>> setHm = hm.entrySet();
-            Iterator<Map.Entry<String, Integer>> it = setHm.iterator();
-            while(it.hasNext()){
-                Map.Entry<String, Integer> e = it.next();
-                if(max < e.getValue()){
-                    max = e.getValue();
-                    maxElt = e.getKey();
-                }
-            }
-            hm.put(maxElt, 0);
-            //System.out.println(maxElt + " : " + max);
-            tab[i] = new Frequency(maxElt, max);
+    public Frequency[] getTabFrequencies(Map<String, Integer> hm) {
+        Frequency[] tabFrequencies = new Frequency[hm.size()];
+        Set<Map.Entry<String, Integer>> setHm = hm.entrySet();
+        Iterator<Map.Entry<String, Integer>> it = setHm.iterator();
+        int a = 0;
+        while(it.hasNext()){
+            Map.Entry<String, Integer> e = it.next();
+            tabFrequencies[a] = new Frequency(e.getKey(), e.getValue());
+            a++;
         }
-        hm.put("numOfVariousByte", tab.length);
-        return tab;
+
+        return tabFrequencies;
     }
 
-    public HuffmanNode creationDArbreHuffman(Frequency[] tabF) throws CloneNotSupportedException {
+    // Trie un map et le met dans un tableau avec l'algo max
+    public PriorityQueue<HuffmanNode> getByteByFrequencyOrder(Frequency[] tabFrequencies) throws IOException {
+        PriorityQueue<HuffmanNode> priorityQueue = new PriorityQueue<>();
+        for(int i = 0; i < tabFrequencies.length; i++){
+            HuffmanNode node = new HuffmanNode(tabFrequencies[i].getName(), tabFrequencies[i].getValue(), null,null);
+            priorityQueue.offer(node);
+        }
+
+        return priorityQueue;
+    }
+
+
+
+    public HuffmanNode creationDArbreHuffman(PriorityQueue<HuffmanNode> huffNodeQueue) throws CloneNotSupportedException {
         System.out.println("Start generate huffman tree");
-        HuffmanNode tree = new HuffmanNode(tabF[tabF.length - 1].getName(), tabF[tabF.length - 1].getValue(), null, null);
-        for(int i = tabF.length - 2; i >= 0; i--){
-            HuffmanNode newNode = new HuffmanNode(tabF[i].getName(), tabF[i].getValue(), null, null);
-            tree.addNode(newNode);
+        while (huffNodeQueue.size() > 1) {
+
+            HuffmanNode x = huffNodeQueue.poll();
+            x.setBit(0);
+
+            HuffmanNode y = huffNodeQueue.poll();
+            y.setBit(1);
+
+            HuffmanNode sum = new HuffmanNode("#", x.getFrequence() + y.getFrequence(), x, y);
+
+            huffNodeQueue.offer(sum);
         }
         System.out.println("Finish generate huffman tree");
-        return tree;
+        return huffNodeQueue.poll();
     }
 
-    public String generateCompresseFile(File file, HuffmanNode[] huffNodes) throws IOException {
+    public String generateCompresseFile(File file, Map<String, String> allNodeBit) throws IOException {
         StringBuilder result = new StringBuilder();
         System.out.println("Start generate string bit file");
         try (InputStream bufferedReader = new BufferedInputStream(new FileInputStream(file))) {
@@ -105,12 +77,7 @@ public class Huffman{
                 //System.out.println(singleCharInt);
                 String byteRead = String.format("0x%X", singleCharInt);
                 //System.out.println(byteRead);
-                for(HuffmanNode h : huffNodes){
-                    if(h.getName().equals(byteRead)){
-                        result.append(h.getBitNode());
-                        break;
-                    }
-                }
+                result.append(allNodeBit.get(byteRead));
             }
         }
         System.out.println("Finish generate string bit file");
@@ -124,16 +91,14 @@ public class Huffman{
     public void Compresser(String nomFichierEntre, String nomFichierSortie) throws IOException {
         File entryFile = new File(nomFichierEntre);
         Map<String, Integer> hm = createFrequencyTable(entryFile);
-        Frequency[] tabFrequencies = getByteByFrequencyOrder(hm);
+        Frequency[] tabFrequencies = getTabFrequencies(hm);
+        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(tabFrequencies);
         HuffmanNode tree = null;
         try {
-            tree = creationDArbreHuffman(tabFrequencies);
-            HuffmanNode[] huffNodes = tree.getAllNodeBitInOrder();
-            for(HuffmanNode n : huffNodes){
-                System.out.println(n.getName() + " : " + n.getValue() + " : " + n.getBitNode() );
-            }
-            BitOutputStream bout = new BitOutputStream(nomFichierSortie, tabFrequencies);
-            String compresseFileString = generateCompresseFile(entryFile, huffNodes);
+            tree = creationDArbreHuffman(huffmanNodepriorityQueue);
+            Map<String, String> allNodeBit = tree.getAllNodeBitInOrder();
+            BitOutputStream bout = new BitOutputStream(nomFichierSortie, hm);
+            String compresseFileString = generateCompresseFile(entryFile, allNodeBit);
 
             System.out.println("Start write the bit");
             for(int i = 0; i < compresseFileString.length(); i++){
@@ -149,13 +114,15 @@ public class Huffman{
 
     }
 
-    public void Decompresser(String nomFichierEntre, String nomFichierSortie) throws FileNotFoundException {
+    public void Decompresser(String nomFichierEntre, String nomFichierSortie) throws IOException {
         BitInputStream bint = new BitInputStream(nomFichierEntre);
-        Frequency[] tabFrequencies = bint.getFrequencies();
         BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(nomFichierSortie));
+        Map<String, Integer> hm = bint.getMapFrequencies();
+        Frequency[] tabFrequencies = getTabFrequencies(hm);
+        PriorityQueue<HuffmanNode> huffmanNodepriorityQueue = getByteByFrequencyOrder(tabFrequencies);
         HuffmanNode tree = null;
         try {
-            tree = creationDArbreHuffman(tabFrequencies);
+            tree = creationDArbreHuffman(huffmanNodepriorityQueue);
             int rbit;
             while((rbit = bint.readBit()) != -1){
                 HuffmanNode n = tree.readTheBit(rbit);
@@ -167,12 +134,9 @@ public class Huffman{
             }
             bout.flush();
             bout.close();
-        } catch (CloneNotSupportedException | IOException e) {
+        } catch (IOException | CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        /*for(Frequency f : tabFrequencies){
-            System.out.println(f.getName() + " : " + f.getValue());
-        }*/
 
 
     }

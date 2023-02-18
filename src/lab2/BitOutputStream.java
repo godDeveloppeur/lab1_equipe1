@@ -1,9 +1,11 @@
-package laboratoire2;
-import java.io.*;
-import java.util.Map;
-import java.util.PriorityQueue;
+package lab2;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class BitOutputStream {
+
     private FileOutputStream output;
     private int digits;     // a buffer used to build up next set of digits
     private int numDigits;  // how many digits are currently in the buffer
@@ -12,11 +14,9 @@ public class BitOutputStream {
 
     // pre : given file name is legal
     // post: creates a BitOutputStream sending output to the file
-    public BitOutputStream(String file,  Map<String, Integer> mapFrequencies) {
+    public BitOutputStream(String file) {
         try {
             output = new FileOutputStream(file);
-            ObjectOutput s = new ObjectOutputStream(output);
-            s.writeObject(mapFrequencies);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
         }
@@ -39,7 +39,6 @@ public class BitOutputStream {
     //       closing the output.
     private void flush() {
         try {
-            //System.out.println(digits);
             output.write(digits);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());

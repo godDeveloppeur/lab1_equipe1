@@ -1,13 +1,6 @@
-import laboratoire2.BitOutputStream;
-import laboratoire2.Frequency;
 import laboratoire2.Huffman;
-import laboratoire2.HuffmanNode;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class App {
 

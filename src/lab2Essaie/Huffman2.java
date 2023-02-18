@@ -1,11 +1,11 @@
-package laboratoire2;
+package lab2Essaie;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
+/*
 public class Huffman2 {
     //Lire le fichier
     public void readFileBinaryMode() throws IOException {
@@ -105,3 +105,4 @@ public class Huffman2 {
 
     }
 }
+*/

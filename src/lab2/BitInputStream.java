@@ -1,28 +1,22 @@
-package laboratoire2;
+package lab2;
 
-import java.io.*;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class BitInputStream {
     private FileInputStream input;
     private int digits;     // next set of digits (buffer)
     private int numDigits;  // how many digits from buffer have been used
-    private Map<String, Integer> mapFrequencies;
-    private static final int BYTE_SIZE = 8;  // digits per byte
 
+    private static final int BYTE_SIZE = 8;  // digits per byte
 
     // pre : given file name is legal
     // post: creates a BitInputStream reading input from the file
     public BitInputStream(String file) {
         try {
             input = new FileInputStream(file);
-            ObjectInputStream s = new ObjectInputStream(input);
-            mapFrequencies = (Map<String, Integer>) s.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         nextByte();
     }
@@ -48,10 +42,6 @@ public class BitInputStream {
             throw new RuntimeException(e.toString());
         }
         numDigits = 0;
-    }
-
-    public Map<String, Integer> getMapFrequencies() {
-        return mapFrequencies;
     }
 
     // post: input is closed
