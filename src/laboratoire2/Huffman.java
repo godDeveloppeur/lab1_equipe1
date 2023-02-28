@@ -31,7 +31,6 @@ public class Huffman{
             Map.Entry<String, Integer> e = it.next();
             result += Integer.parseInt(e.getKey().substring(2), 16) +  ":" + e.getValue() + ";";
         }
-
         return result;
     }
 
