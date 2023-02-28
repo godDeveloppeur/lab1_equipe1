@@ -30,10 +30,8 @@ public class DocDist{
             int nbWordsFile = 0;
             while((singleCharInt = inputStreamReader.read()) != -1) {
                 singleChar = (char) singleCharInt;
-                //System.out.println(String.format("0x%X %c", singleCharInt, singleChar));
                 singleString = singleChar + "";
                 singleString = singleString.replaceAll(REGEX, " ");
-                //System.out.println(singleChar);
 
                 if(singleString.equals(" ")){
                     if(actualWord.length() > 0){
@@ -54,7 +52,6 @@ public class DocDist{
                 }else{
                     actualWord += singleChar;
                 }
-
             }
             System.out.println("Fichier " + file + " : " + nbWordsFile + " mots, " + frequenceTableFile.size() + " mots dictincts");
         }
