@@ -13,8 +13,8 @@ import org.json.simple.JSONObject;
 public class TxtToJsonConverter {
 
     public static void main(String[] args) {
-        String inputFile = "./src/wordLinkLab/wordFrancais.txt";
-        String outputFile = "./src/wordLinkLab/wordFrancaisJson.json";
+        String inputFile = "./src/wordLinkLab/wordEnglish.txt";
+        String outputFile = "./src/wordLinkLab/wordEnglish.json";
 
         try {
             List<String> wordsList = readWordsFromFile(inputFile);
